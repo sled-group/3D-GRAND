@@ -38,7 +38,6 @@ max_new_tokens = 5000
 obj_context_feature_type = "text"
 
 
-
 tokenizer, model, data_loader = load_model_and_dataloader(
     model_path=model_path,
     model_base=model_base,
@@ -46,10 +45,11 @@ tokenizer, model, data_loader = load_model_and_dataloader(
     load_4bit=load_4bit,
     load_bf16=load_bf16,
     scene_to_obj_mapping=scene_to_obj_mapping,
-    device_map='cpu',
+    device_map="cpu",
 )  # Huggingface Zero-GPU has to use .to(device) to set the device, otherwise it will fail
 
 model.to("cuda")  # Huggingface Zero-GPU requires explicit device placement
+
 
 def get_chatbot_response(user_chat_input, scene_id):
     # Get the response from the model
@@ -61,9 +61,10 @@ def get_chatbot_response(user_chat_input, scene_id):
         user_input=user_chat_input,
         max_new_tokens=max_new_tokens,
         temperature=0.2,
-        top_p=0.9
+        top_p=0.9,
     )
     return scene_id, prompt, response
+
 
 # def get_chatbot_response(user_chat_input):
 #     # Get the response from the chatbot
@@ -75,6 +76,7 @@ def get_chatbot_response(user_chat_input, scene_id):
 #     <detailed_grounding>a <p>brown wooden office desk</p>[<obj_12>] on the left to the <p>gray shelf</p>[<obj_20>].</detailed_grounding> <refer_expression_grounding>These sentences refer to <p>the brown wooden office desk</p>[<obj_12>].</refer_expression_grounding>
 #     """
 #     return scene_id, scene_graph, response
+
 
 # Resetting to blank
 def reset_textbox():
@@ -201,7 +203,7 @@ def highlight_clusters_in_mesh(
     centroids_extends_refer,
     mesh,
     output_dir,
-    output_file_name="highlighted_mesh.glb",
+    output_file_name="highlighted_mesh.obj",
 ):
     print("*" * 50)
     # Visualize the highlighted points by drawing 3D bounding boxes overlay on a mesh
@@ -227,7 +229,6 @@ def highlight_clusters_in_mesh(
         for b in bbox:
             combined_mesh += b
 
-    combined_mesh = prettify_mesh_for_gradio(combined_mesh)
     # Save the combined mesh
     output_file_path = os.path.join(output_path, output_file_name)
     o3d.io.write_triangle_mesh(
@@ -261,6 +262,7 @@ def get_centroids_extents(obj_list, scene_dict):
             centroids_extents.append((centroid, extent))
     return centroids_extents
 
+
 @spaces.GPU
 def language_model_forward(
     session_state, user_chat_input, top_p, temperature, dropdown_scene
@@ -283,7 +285,9 @@ def language_model_forward(
     mesh = o3d.io.read_triangle_mesh(original_model_path)
 
     # get chatbot response
-    scene_id, scene_graph, response = get_chatbot_response(user_chat_input, session_state.scene)
+    scene_id, scene_graph, response = get_chatbot_response(
+        user_chat_input, session_state.scene
+    )
 
     assert scene_id == session_state.scene  # Ensure the scene ID matches
 
@@ -323,11 +327,13 @@ def language_model_forward(
         centroids_extents_refer,
         mesh,
         session_output_dir,
-        output_file_name="highlighted_model.glb",
+        output_file_name="highlighted_model.obj",
     )
-    
+
     # Update the chat history with the response
-    last_turn = session_state.chat_history_for_display[-1] # first is user input, second is assistant response
+    last_turn = session_state.chat_history_for_display[
+        -1
+    ]  # first is user input, second is assistant response
     last_turn = (last_turn[0], response)
     session_state.chat_history_for_display[-1] = last_turn
     session_state.save()  # save the session state
@@ -335,7 +341,7 @@ def language_model_forward(
     yield session_state, highlighted_model_path, session_state.chat_history_for_display
 
 
-title = """<h1 align="center">🤖 3D-GRAND: Towards Better Grounding and Less Hallucination for 3D-LLMs 🚀</h1>
+title = """<h1 align="center">🏠💬  3D-GRAND: Towards Better Grounding and Less Hallucination for 3D-LLMs 🚀</h1>
 <p><center>
 <a href="https://3d-grand.github.io/" target="_blank">[Project Page]</a>
 <a href="https://www.dropbox.com/scl/fo/5p9nb4kalnz407sbqgemg/AG1KcxeIS_SUoJ1hoLPzv84?rlkey=weunabtbiz17jitfv3f4jpmm1&dl=0" target="_blank">[3D-GRAND Data]</a>
@@ -350,7 +356,7 @@ title = """<h1 align="center">🤖 3D-GRAND: Towards Better Grounding and Less H
 
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     session_state = gr.State(Session.create)
-    
+
     gr.HTML(title)
 
     with gr.Column():
@@ -422,7 +428,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                         gr.Examples(
                             examples=[
                                 ["The TV on the drawer, opposing the bed."],
-                                ["the desk next to the window"]
+                                ["the desk next to the window"],
                             ],
                             inputs=user_chat_input,
                         )
@@ -455,12 +461,22 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     dropdown_scene.change(
         fn=change_scene_or_system_prompt,
         inputs=[dropdown_scene],
-        outputs=[session_state, model_3d, model_3d_grounding_result, chat_history_for_display],
+        outputs=[
+            session_state,
+            model_3d,
+            model_3d_grounding_result,
+            chat_history_for_display,
+        ],
     )
     clear_button.click(
         fn=change_scene_or_system_prompt,
         inputs=[dropdown_scene],
-        outputs=[session_state, model_3d, model_3d_grounding_result, chat_history_for_display],
+        outputs=[
+            session_state,
+            model_3d,
+            model_3d_grounding_result,
+            chat_history_for_display,
+        ],
     )
     user_chat_input.submit(
         fn=language_model_forward,
