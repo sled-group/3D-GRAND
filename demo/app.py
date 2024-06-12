@@ -408,7 +408,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                     clear_color=[0.0, 0.0, 0.0, 0.0],
                     label="Grounding Result",
                     zoom_speed=15.0,
-                
+                )
                 gr.HTML(
                     """<center><strong>
                     <div style="display:inline-block; color:green">&#9632;</div> = Chosen Target &nbsp;
