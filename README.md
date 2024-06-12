@@ -1,4 +1,4 @@
-# 3D-GRAND: Towards Better Grounding and Less Hallucination for 3D-LLMs
+# 3D-GRAND: A Million-Scale Dataset for 3D-LLMs with Better Grounding and Less Hallucination
 
 # 3D-GRAND
 
