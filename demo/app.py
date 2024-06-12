@@ -128,7 +128,7 @@ def cylinder_frame(p0, p1):
     return transformation
 
 
-def create_cylinder_mesh(p0, p1, color, radius=0.02, resolution=20, split=1):
+def create_cylinder_mesh(p0, p1, color, radius=0.04, resolution=20, split=1):
     """Create a colored cylinder mesh between two points p0 and p1."""
     cylinder = o3d.geometry.TriangleMesh.create_cylinder(
         radius=radius, height=1, resolution=resolution, split=split
@@ -157,7 +157,7 @@ def prettify_mesh_for_gradio(mesh):
     return mesh
 
 
-def create_bbox(center, extents, color=[1, 0, 0], radius=0.02):
+def create_bbox(center, extents, color=[1, 0, 0], radius=0.04):
     """Create a colored bounding box with given center, extents, and line thickness."""
     # ... [The same code as before to define corners and lines] ...
     print(extents)
@@ -220,7 +220,9 @@ def highlight_clusters_in_mesh(
     for center, extent in centroids_extents_detailed:
         print("center: ", center)
         print("extent: ", extent)
-        bbox = create_bbox(center, extent, color=[0, 0, 1])  # Red color for all boxes
+        bbox = create_bbox(
+            center, extent, color=[1, 1, 0]
+        )  # yellow color for all boxes
         for b in bbox:
             combined_mesh += b
 
@@ -400,7 +402,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 )
                 gr.HTML(
                     """<center><strong>
-                    <div style="display:inline-block; color:blue">&#9632;</div> = Landmark &nbsp;
+                    <div style="display:inline-block; color:yellow">&#9632;</div> = Landmark &nbsp;
                     <div style="display:inline-block; color:green">&#9632;</div> = Chosen Target
                     </strong></center>
                     """
