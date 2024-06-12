@@ -11,7 +11,6 @@ from copy import deepcopy
 import numpy as np
 import re
 from bs4 import BeautifulSoup
-import torch
 import trimesh.transformations as tf
 
 import logging

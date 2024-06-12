@@ -16,4 +16,5 @@ open3d
 bs4
 attrs
 cattrs
+trimesh
 
