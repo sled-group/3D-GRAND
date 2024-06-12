@@ -157,7 +157,7 @@ def prettify_mesh_for_gradio(mesh):
     return mesh
 
 
-def create_bbox(center, extents, color=[1, 0, 0], radius=0.04):
+def create_bbox(center, extents, color=[1, 0, 0], radius=0.02):
     """Create a colored bounding box with given center, extents, and line thickness."""
     # ... [The same code as before to define corners and lines] ...
     print(extents)
@@ -166,15 +166,24 @@ def create_bbox(center, extents, color=[1, 0, 0], radius=0.04):
     center = center.replace("[", "").replace("]", "")
     extents = [float(x.strip()) for x in extents.split(",")]
     center = [float(x.strip()) for x in center.split(",")]
+    angle = -np.pi / 2  # 90 degrees
+    axis = [1, 0, 0]  # Rotate around x-axis
+    R = tf.rotation_matrix(angle, axis)
+    center_homogeneous = np.append(center, 1)
+    extents_homogeneous = np.append(extents, 1)
 
-    sx, sy, sz = float(extents[0]), float(extents[1]), float(extents[2])
+    # Apply the rotation to the center and extents
+    rotated_center = np.dot(R, center_homogeneous)[:3]
+    rotated_extents = np.dot(R, extents_homogeneous)[:3]
+
+    sx, sy, sz = rotated_extents
     x_corners = [sx / 2, sx / 2, -sx / 2, -sx / 2, sx / 2, sx / 2, -sx / 2, -sx / 2]
     y_corners = [sy / 2, -sy / 2, -sy / 2, sy / 2, sy / 2, -sy / 2, -sy / 2, sy / 2]
     z_corners = [sz / 2, sz / 2, sz / 2, sz / 2, -sz / 2, -sz / 2, -sz / 2, -sz / 2]
     corners_3d = np.vstack([x_corners, y_corners, z_corners])
-    corners_3d[0, :] = corners_3d[0, :] + float(center[0])
-    corners_3d[1, :] = corners_3d[1, :] + float(center[1])
-    corners_3d[2, :] = corners_3d[2, :] + float(center[2])
+    corners_3d[0, :] = corners_3d[0, :] + float(rotated_center[0])
+    corners_3d[1, :] = corners_3d[1, :] + float(rotated_center[1])
+    corners_3d[2, :] = corners_3d[2, :] + float(rotated_center[2])
     corners_3d = np.transpose(corners_3d)
 
     lines = [
@@ -399,11 +408,11 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                     clear_color=[0.0, 0.0, 0.0, 0.0],
                     label="Grounding Result",
                     zoom_speed=15.0,
-                )
+                
                 gr.HTML(
                     """<center><strong>
-                    <div style="display:inline-block; color:yellow">&#9632;</div> = Landmark &nbsp;
-                    <div style="display:inline-block; color:green">&#9632;</div> = Chosen Target
+                    <div style="display:inline-block; color:green">&#9632;</div> = Chosen Target &nbsp;
+                    <div style="display:inline-block; color:yellow">&#9632;</div> = Landmarks
                     </strong></center>
                     """
                 )
