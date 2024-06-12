@@ -46,8 +46,10 @@ cd 3d_grand_demo
 ### 2. Prepare Environment
 
 ```
-conda env create -f environment.yaml
-conda activate 3d-grand
+conda create -n 3d_grand_hf python=3.10 -y
+conda activate 3d_grand_hf
+pip install -r demo/requirements.txt
+pip install spaces
 ```
 
 ### 3. Download Checkpoints
