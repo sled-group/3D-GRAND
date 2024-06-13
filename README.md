@@ -73,12 +73,12 @@ Alternatively, you can try the online demo hosted on Hugging Face: [[demo link]]
    If you find our repo useful for your research, please consider citing our paper:
 
    ```bibtex
-   @misc{yang20243dgrand,
-           title={3D-GRAND: Towards Better Grounding and Less Hallucination for 3D-LLMs}, 
-           author={Jianing Yang and Xuweiyi Chen and Nikhil Madaan and Madhavan Iyengar and Shengyi Qian and David F. Fouhey and Joyce Chai},
-           year={2024},
-           eprint={2406.05132},
-           archivePrefix={arXiv},
-           primaryClass={cs.CV}
-     }
+   @misc{3d_grand,
+       title={3D-GRAND: A Million-Scale Dataset for 3D-LLMs with Better Grounding and Less Hallucination},
+       author={Jianing Yang and Xuweiyi Chen and Nikhil Madaan and Madhavan Iyengar and Shengyi Qian and David F. Fouhey and Joyce Chai},
+       year={2024},
+       eprint={2406.05132},
+       archivePrefix={arXiv},
+       primaryClass={cs.CV}
+   }
    ```
